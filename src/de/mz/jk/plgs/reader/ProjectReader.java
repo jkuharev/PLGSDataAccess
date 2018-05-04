@@ -116,6 +116,7 @@ public class ProjectReader
 			if(loadSamples) prj.samples = getSamples(prj);
 			prj.expressionAnalysisIDs = getExpressionAnalysisIDs();
 			prj.selectedExpressionAnalysisIDs.addAll( prj.expressionAnalysisIDs );
+
 		ExpressionAnalysisReader.readExpressionAnalyses( prj );
 		return prj;
 	}

@@ -10,10 +10,13 @@ public class Project implements Comparable<Project>
 	
 	/** DB: row index */
 	public int index=0;
+
 	/** PLGS: unique id e.g. Proj__12505921454590_3868760712547077 */
 	public String id="";
+
 	/** PLGS: human readable title */
 	public String title="";
+
 	/** PLGS: file system directory path containing the folder named with project's id */
 	public String root="";
 	
@@ -70,21 +73,28 @@ public class Project implements Comparable<Project>
 	
 
 	/**
+	 * TODO implement a complete cloning of all project components like Expression Analyses, Groups, Samples, Runs, ...
+	 */
+	/**
 	 * clone project,
 	 * no samples and no expression analyses copied!!!
 	 */
 	@Override public Project clone()
 	{
 		Project clone = new Project();
+		clone.index = index;
+		clone.id = id;
 		clone.title = title;
 		clone.root = root;
-		clone.id = id;
-		clone.index = index;
+		clone.state = state;
+		clone.info = info;
 		clone.db = db;
+		clone.titlePrefix = titlePrefix;
+		clone.titleSuffix = titleSuffix;
 
 		return clone;
 	}
-	
+
 	/**
 	 * remove given expression analysis from its old project 
 	 * and add it to this project
