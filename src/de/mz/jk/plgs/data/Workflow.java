@@ -70,7 +70,7 @@ public class Workflow extends Identifyable
 		return
 			"id: " + id + "\n" +
 			"replicate name: " + replicate_name + "\n" +
-			"title: " + replicate_name + "\n" +
+			"title: " + title + "\n" +
 			"sample description: " + sample_description + "\n" +
 			"acquired name: " + acquired_name + "\n" +
 			"input file: " + input_file + "\n" +
