@@ -177,24 +177,23 @@ public class ProjectReader
 							w.id = XJDOM.getAttributeValue(weRef, "VALUE");
 							try
 							{
-								String imode = WorkflowReader.getInstrumentMode(prj, w);
+								w.checkXMLFilePaths( prj );
+								File workflowXML = new File( w.workflowXMLFilePath );
+								String imode = WorkflowReader.getInstrumentMode( workflowXML );
 								
 								if( DEBUG ) 
-									System.out.println("\n"+
-										WorkflowReader.getFile(new File(prj.root), prj.id, w.sample_tracking_id, w.id).getName() +
-										"\t-> instrument mode: " + imode
-									);
+									System.out.println( "\n" + w.workflowXMLFilePath + "\t-> instrument mode: " + imode );
 								
 								if( imode.contains("Electrospray-Shotgun") )
 								{
 									System.out.print(".");									
-									w = WorkflowReader.getWorkflow(prj, w, false, Workflow.AcquisitionMode.DIA);
+									w = WorkflowReader.getWorkflow( workflowXML, false, Workflow.AcquisitionMode.DIA );
 									sample.workflows.add(w);
 								}
                                 else if ( imode.contains("DDA"))
                                 {
                                     System.out.print(".");
-                                    w = WorkflowReader.getWorkflow(prj, w, false, Workflow.AcquisitionMode.DDA);
+									w = WorkflowReader.getWorkflow( workflowXML, false, Workflow.AcquisitionMode.DDA );
                                     sample.workflows.add(w);
                                 }
 								else
@@ -203,10 +202,7 @@ public class ProjectReader
 								}
 							} catch (Exception e) 
 							{
-								System.err.println(
-									"cannot read file: "+ 
-									WorkflowReader.getFile(new File(prj.root), prj.id, w.sample_tracking_id, w.id).getAbsolutePath() 
-								);
+								System.err.println( "cannot read file: " + w.workflowXMLFilePath );
 								e.printStackTrace();
 							}
 						}
@@ -214,7 +210,7 @@ public class ProjectReader
 				}
 			}
 			System.out.print(" ");
-			// if(sample.workflows.size()>0)
+
 			res.add(sample);
 		}
 		System.out.println();

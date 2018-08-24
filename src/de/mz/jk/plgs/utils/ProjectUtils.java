@@ -1,13 +1,11 @@
 /** PLGSDataAccess, de.mz.jk.plgs.utils, Apr 27, 2018*/
 package de.mz.jk.plgs.utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.mz.jk.plgs.data.ExpressionAnalysis;
-import de.mz.jk.plgs.data.Group;
-import de.mz.jk.plgs.data.Project;
-import de.mz.jk.plgs.data.Sample;
+import de.mz.jk.plgs.data.*;
 
 /**
  * <h3>{@link ProjectUtils}</h3>
@@ -32,23 +30,49 @@ public class ProjectUtils
 		}
 	}
 
-	public static Project cloneProject(Project src, boolean copyStructure)
+	/**
+	 * construct a search result file path as follows
+	 * <B>[rootDir]/[Project_ID]/[SAMPLE_TRACKING_ID]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
+	 * @param rootDir
+	 * @param ProjectID
+	 * @param SampleTrackingID
+	 * @param WorkflowID
+	 * @return resulting file path
+	 */
+	public static String suggestPLGSPathForWorkflowXML(String rootDir, String projectID, String sampleTrackingID, String workflowID)
 	{
-		Project clone = new Project();
-		clone.index = src.index;
-		clone.id = src.id;
-		clone.title = src.title;
-		clone.root = src.root;
-		clone.state = src.state;
-		clone.info = src.info;
-		clone.db = src.db;
-		clone.titlePrefix = src.titlePrefix;
-		clone.titleSuffix = src.titleSuffix;
-		if (copyStructure)
-		{
-			for ( ExpressionAnalysis ea : src.expressionAnalyses )
-			{}
-		}
-		return clone;
+		String path = rootDir + File.separator +
+				projectID + File.separator +
+				sampleTrackingID + File.separator +
+				sampleTrackingID + "_WorkflowResults" + File.separator +
+				workflowID + ".xml";
+		return path;
+	}
+
+	/**
+	 * construct a search result file path as follows
+	 * <B>[rootDir]/[Project_ID]/[SAMPLE_TRACKING_ID]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
+	 * @param project
+	 * @param run
+	 * @return resulting file path
+	 */
+	public static String suggestPLGSPathForWorkflowXML(Project project, Workflow run)
+	{
+		String path = suggestPLGSPathForWorkflowXML( new File( project.root ).getAbsolutePath(), project.id, run.sample_tracking_id, run.id );
+		return path;
+	}
+
+	public static String suggestPLGSPathForMassSpectrumXML(String rootDir, String projectID, String sampleTrackingID)
+	{
+		String path = rootDir + File.separator +
+				projectID + File.separatorChar +
+				sampleTrackingID + File.separatorChar + "MassSpectrum.xml";
+		return path;
+	}
+
+	public static String suggestPLGSPathForMassSpectrumXML(Project project, Workflow run)
+	{
+		String path = suggestPLGSPathForMassSpectrumXML( new File( project.root ).getAbsolutePath(), project.id, run.sample_tracking_id );
+		return path;
 	}
 }

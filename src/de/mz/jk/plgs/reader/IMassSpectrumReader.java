@@ -2,6 +2,7 @@ package de.mz.jk.plgs.reader;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.jdom.Element;
 
 import de.mz.jk.jsix.libs.XJDOM;
 import de.mz.jk.plgs.data.MassPeak;
+import de.mz.jk.plgs.data.Workflow;
 
 /**
  * Created by napedro on 12/11/15.
@@ -106,16 +108,28 @@ public abstract class IMassSpectrumReader {
     }
 
     /**
-     * checks if next mass peak is valid and reads it<br>
-     * usage:<pre>
-     * while(reader.next())
-     * {
-     * 		MassPeak mp = reader.getMassPeak();
-     * 		...
-     * }
-     * </pre>
-     * @return true if next mass peak is valid, false if not
-     */
+	 * open a mass spectrum file
+	 * @param run
+	 * @throws Exception
+	 */
+	public void openMassSpectrum(Workflow run) throws Exception
+	{
+		File xmlFile = new File( run.massSpectrumXMLFilePath );
+		if (!xmlFile.exists()) { throw new FileNotFoundException( "missing file: " + xmlFile.getAbsolutePath() ); }
+		openFile( xmlFile );
+	}
+
+	/**
+	 * checks if next mass peak is valid and reads it<br>
+	 * usage:<pre>
+	 * while(reader.next())
+	 * {
+	 * 		MassPeak mp = reader.getMassPeak();
+	 * 		...
+	 * }
+	 * </pre>
+	 * @return true if next mass peak is valid, false if not
+	 */
     public boolean next()
     {
         lastMP = getNext();

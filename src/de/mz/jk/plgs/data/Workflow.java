@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.mz.jk.plgs.Identifyable;
+import de.mz.jk.plgs.utils.ProjectUtils;
 
 
 public class Workflow extends Identifyable
@@ -74,9 +75,20 @@ public class Workflow extends Identifyable
 			"sample description: " + sample_description + "\n" +
 			"acquired name: " + acquired_name + "\n" +
 			"input file: " + input_file + "\n" +
-			"xml file: " + xmlFilePath
+			"xml file: " + workflowXMLFilePath
 		;
 	}
 	
-	public String xmlFilePath = "";
+	public String workflowXMLFilePath = "";
+	public String massSpectrumXMLFilePath = "";
+
+	public void checkXMLFilePaths(Project p)
+	{
+		if (workflowXMLFilePath == null || workflowXMLFilePath.length() < 1)
+			workflowXMLFilePath = ProjectUtils.suggestPLGSPathForWorkflowXML( p, this );
+		if (massSpectrumXMLFilePath == null || massSpectrumXMLFilePath.length() < 1)
+			massSpectrumXMLFilePath = ProjectUtils.suggestPLGSPathForMassSpectrumXML( p, this );
+	}
+
+
 }

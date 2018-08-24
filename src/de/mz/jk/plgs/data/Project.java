@@ -29,6 +29,9 @@ public class Project implements Comparable<Project>
 	/** DB: database schema name */
 	public String db = "";
 
+	/** file describing this project **/
+	public String projectFilePath = "";
+
 	/** PLGS: list of known samples from Project.xml: PROJECT.SAMPLES */
 	public List<Sample> samples = new ArrayList<Sample>();
 	
@@ -40,9 +43,11 @@ public class Project implements Comparable<Project>
 	 * [root]/[id]/Project.xml
 	 * @return project files path
 	 */
-	public String getProjectFilePath() 
+	public String getProjectFilePath()
 	{
-		return root + File.separator + id + File.separator + "Project.xml";
+		if (projectFilePath == null || projectFilePath.length() < 1)
+			projectFilePath = root + File.separator + id + File.separator + "Project.xml";
+		return projectFilePath;
 	}
 	
 	/**
@@ -91,6 +96,7 @@ public class Project implements Comparable<Project>
 		clone.db = db;
 		clone.titlePrefix = titlePrefix;
 		clone.titleSuffix = titleSuffix;
+		clone.projectFilePath = projectFilePath;
 
 		return clone;
 	}

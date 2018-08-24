@@ -1,9 +1,6 @@
 package de.mz.jk.plgs.reader;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import org.jdom.DataConversionException;
@@ -38,52 +35,75 @@ public class WorkflowReader
 	public WorkflowReader()
 	{}
 
+// /**
+// * assigns a workflow file to work with
+// * by building its path from parameter attributes<br>
+// * using following pattern:<br>
+// *
+// <B>[rootDir]/[Project_ID]/[SAMPLE_TRACKING_ID]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
+// * @param project
+// * @param workflow
+// * @throws Exception
+// */
+// public static void readWorkflow(Project project, Workflow workflow) throws
+// Exception
+// {
+// readWorkflow( new File( project.root ), project.id, workflow );
+// }
+//
+// /**
+// * assigns a workflow file to work with
+// * by building its path from parameter attributes<br>
+// * using following pattern:<br>
+// *
+// <B>[rootDir]/[Project_ID]/[SAMPLE_TRACKING_ID]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
+// * @param rootDir
+// * @param projectID
+// * @param workflow
+// * @throws Exception
+// */
+// public static void readWorkflow(File rootDir, String projectID, Workflow
+// workflow) throws Exception
+// {
+// WorkflowReader reader = new WorkflowReader( workflow );
+// reader.fillWorkflow( getFile( rootDir, projectID,
+// workflow.sample_tracking_id, workflow.id ), reader.workflow.acquisitionMode
+// );
+// }
+
 	/**
 	 * assigns a workflow file to work with 
-	 * by building its path from parameter attributes<br>
-	 * using following pattern:<br>
-	 * <B>[rootDir]/[Project_ID]/[SAMPLE_TRACKING_ID]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
-	 * @param project
-	 * @param workflow
+	 * by taking the file path from the workflow
+	 * @param run
 	 * @throws Exception 
 	 */
-	public static void readWorkflow(Project project, Workflow workflow) throws Exception
+	public static void readWorkflow(Workflow run) throws Exception
 	{
-		readWorkflow( new File(project.root), project.id, workflow );
+		File xmlFile = new File( run.workflowXMLFilePath );
+		if (!xmlFile.exists()) { throw new FileNotFoundException( "missing file: " + xmlFile.getAbsolutePath() ); }
+		WorkflowReader reader = new WorkflowReader( run );
+		reader.fillWorkflow( xmlFile, reader.workflow.acquisitionMode );
 	}
-	
-	/**
-	 * assigns a workflow file to work with 
-	 * by building its path from parameter attributes<br>
-	 * using following pattern:<br>
-	 * <B>[rootDir]/[Project_ID]/[SAMPLE_TRACKING_ID]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
-	 * @param rootDir
-	 * @param projectID
-	 * @param workflow
-	 * @throws Exception 
-	 */
-	public static void readWorkflow(File rootDir, String projectID, Workflow workflow) throws Exception
-	{
-		WorkflowReader reader = new WorkflowReader( workflow );
-		reader.fillWorkflow( getFile( rootDir, projectID, workflow.sample_tracking_id, workflow.id ), reader.workflow.acquisitionMode );
-	}
-	
-	/**
-	 * assigns a workflow file to work with 
-	 * by building its path from parameter attributes<br>
-	 * using following pattern:<br>
-	 * <B>[workflowFolder]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
-	 * @param workflowFolder
-	 * @param workflow
-	 * @throws Exception
-	 */
-	public static void readWorkflow(File workflowFolder, Workflow workflow) throws Exception
-	{
-		WorkflowReader reader = new WorkflowReader( workflow );
-		File resDir = new File( workflowFolder + File.separator + workflow.sample_tracking_id + "_WorkflowResults" );
-		File runFile = new File( resDir + File.separator + workflow.id + ".xml" );
-		reader.fillWorkflow( runFile, reader.workflow.acquisitionMode );
-	}
+
+// /**
+// * assigns a workflow file to work with
+// * by building its path from parameter attributes<br>
+// * using following pattern:<br>
+// *
+// <B>[workflowFolder]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
+// * @param workflowFolder
+// * @param workflow
+// * @throws Exception
+// */
+// public static void readWorkflow(File workflowFolder, Workflow workflow)
+// throws Exception
+// {
+// WorkflowReader reader = new WorkflowReader( workflow );
+// File resDir = new File( workflowFolder + File.separator +
+// workflow.sample_tracking_id + "_WorkflowResults" );
+// File runFile = new File( resDir + File.separator + workflow.id + ".xml" );
+// reader.fillWorkflow( runFile, reader.workflow.acquisitionMode );
+// }
 	
 	private void fillWorkflow( File xmlFile, Workflow.AcquisitionMode acqMode) throws Exception
 	{
@@ -333,20 +353,22 @@ public class WorkflowReader
 // System.out.println( "" );
     }
 
-    /**
-	 * 
-	 * @param p the project
-	 * @param w the workflow object
-	 * @param fullRead if true detailed information about query masses/peptides/proteins is included 
-	 * @return
-	 * @throws Exception
-	 */
-	public static Workflow getWorkflow(Project p, Workflow w, boolean fullRead, Workflow.AcquisitionMode wfMode) throws Exception
-	{
-		File file = getFile(new File(p.root), p.id, w.sample_tracking_id, w.id);
-
-        return getWorkflow(file, fullRead, wfMode);
-	}
+// /**
+// *
+// * @param p the project
+// * @param w the workflow object
+// * @param fullRead if true detailed information about query
+// masses/peptides/proteins is included
+// * @return
+// * @throws Exception
+// */
+// public static Workflow getWorkflow(Project p, Workflow w, boolean fullRead,
+// Workflow.AcquisitionMode wfMode) throws Exception
+// {
+// File file = getFile(new File(p.root), p.id, w.sample_tracking_id, w.id);
+//
+// return getWorkflow(file, fullRead, wfMode);
+// }
 
 	/**
 	 * read a workflow xml file automatically guessing the acquisition mode
@@ -377,11 +399,11 @@ public class WorkflowReader
 
 		try{w.sample_tracking_id = workflowXMLFile.getParentFile().getParentFile().getName();} catch (Exception e) {}
 		w.id = XFiles.getBaseName( workflowXMLFile );
-		w.xmlFilePath = workflowXMLFile.getAbsolutePath();
+		w.workflowXMLFilePath = workflowXMLFile.getAbsolutePath();
 		// replicate name origins from expression analysis
 		w.replicate_name = r.workflow.title;
 		// store the same as meta info
-		w.metaInfo.put( "WORKFLOW_XML_FILE_PATH", w.xmlFilePath );
+		w.metaInfo.put( "WORKFLOW_XML_FILE_PATH", w.workflowXMLFilePath );
 		w.metaInfo.put( "WORKFLOW_REPLICATE_NAME", w.replicate_name );
 		w.metaInfo.put( "WORKFLOW_ID", w.id );
 		// do we full read?
@@ -415,17 +437,18 @@ public class WorkflowReader
 		return r.workflow;
 	}
 	
-	/**
-	 * read instrument mode parameter from workflow xml file
-	 * @param p the project (must define p.root, p.id)
-	 * @param w the workflow (must define w.sample_tracking_id, w.id))
-	 * @return the instrument mode string
-	 */
-	public static String getInstrumentMode(Project p, Workflow w)
-	{
-		return getInstrumentMode( getFile(new File(p.root), p.id, w.sample_tracking_id, w.id) );
-	}
-	
+// /**
+// * read instrument mode parameter from workflow xml file
+// * @param p the project (must define p.root, p.id)
+// * @param w the workflow (must define w.sample_tracking_id, w.id))
+// * @return the instrument mode string
+// */
+// public static String getInstrumentMode(Project p, Workflow w)
+// {
+// return getInstrumentMode( getFile(new File(p.root), p.id,
+// w.sample_tracking_id, w.id) );
+// }
+//
 	/**
 	 * read instrument mode parameter from workflow xml file
 	 * @param workflowXMLFile the file to read
@@ -500,25 +523,27 @@ public class WorkflowReader
 		return res;
 	}
 	
-	/**
-	 * construct a File object using following pattern:<br>
-	 * <B>[rootDir]/[Project_ID]/[SAMPLE_TRACKING_ID]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
-	 * @param rootDir
-	 * @param ProjectID
-	 * @param SampleTrackingID
-	 * @param WorkflowID
-	 * @return resulting file object
-	 */
-	public static File getFile(File rootDir, String ProjectID, String SampleTrackingID, String WorkflowID)
-	{
-		return new File(
-			rootDir.getAbsolutePath() + File.separator +
-			ProjectID + File.separator +
-			SampleTrackingID + File.separator +
-			SampleTrackingID + "_WorkflowResults" + File.separator +
-			WorkflowID +  ".xml"
-		);
-	}
+// /**
+// * construct a File object using following pattern:<br>
+// *
+// <B>[rootDir]/[Project_ID]/[SAMPLE_TRACKING_ID]/[SAMPLE_TRACKING_ID]_WorkflowResults/[WORKFLOW_ID].xml</B>
+// * @param rootDir
+// * @param ProjectID
+// * @param SampleTrackingID
+// * @param WorkflowID
+// * @return resulting file object
+// */
+// public static File getFile(File rootDir, String ProjectID, String
+// SampleTrackingID, String WorkflowID)
+// {
+// return new File(
+// rootDir.getAbsolutePath() + File.separator +
+// ProjectID + File.separator +
+// SampleTrackingID + File.separator +
+// SampleTrackingID + "_WorkflowResults" + File.separator +
+// WorkflowID + ".xml"
+// );
+// }
 
 
     private void readWF() throws Exception {
